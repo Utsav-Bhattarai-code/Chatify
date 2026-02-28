@@ -5,10 +5,13 @@
   "main": "index.js",
   "scripts": {
     "build": "npm --prefix backend install && npm --prefix frontend install && npm --prefix frontend run build",
-    "start" : "npm run start --prefix backend"
+    "start": "npm run start --prefix backend"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs"
+  "type": "commonjs",
+  "dependencies": {
+    "nodemailer": "^8.0.1"
+  }
 }
