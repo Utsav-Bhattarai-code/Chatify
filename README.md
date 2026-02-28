@@ -1,1 +1,1 @@
-Chatify is a messenging app with some major functionalities.
+Chatify is a messenging app with some major functionalities of messenger.
