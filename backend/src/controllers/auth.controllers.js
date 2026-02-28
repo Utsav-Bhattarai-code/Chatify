@@ -2,6 +2,7 @@ import User from "../models/user.model.js";
 import bcrypt from "bcryptjs"
 import { getPixelAvatar } from "../utils/getPixelAvatar.js";
 import { generateToken } from "../utils/generateToken.js";
+import cloudinary from "../lib/cloudinary.js";
 
 export const signup = async (req , res) => {
     const {fullName , email , password , confirmPassword} = req.body;
@@ -97,4 +98,47 @@ export const logout = (_,res) => {
         message : "Logout was successful!",
         status : true
     })
+}
+
+export const updateProfile = async (req , res) => {
+    const {profilePic , Bio , gender , DOB} = req.body;
+    try {
+        if (!profilePic && !Bio && !gender && !DOB) return res.status(400).json({
+            message : "All fields can't be empty!",
+            status : false
+        })
+        const updates = {};
+        if (profilePic) {
+            const uploader = await cloudinary.uploader.upload(profilePic);
+            updates["profilePic"] = uploader.secure_url;
+        }
+        if (Bio) {
+            updates["Bio"] = Bio;
+        }
+        if (gender) {
+            updates["gender"] = gender;
+        }
+        if (DOB) {
+            updates["DOB"] = DOB;
+        }
+
+        const userId = req.user._id;
+
+        const user = await User.findByIdAndUpdate({_id : userId} , updates).select("-password");
+
+        return res.status(200).json({
+            message : "User deatils updated successfully!",
+            status : true,
+            data : {
+                ...user
+            }
+        })
+
+    } catch (error) {
+        console.log("Error occured in the updateProfile controller :" , error.message);
+        res.status(500).json({
+            message : "Internal server error!",
+            status : false
+        })
+    }
 }
